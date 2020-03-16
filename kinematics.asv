@@ -1,0 +1,56 @@
+ax = 0;
+xv0 = 2;
+x0 = 0;
+
+ay = -9.81;
+yv0 = 10;
+y0 = 0;
+
+dt = 0.05;
+n_start = 1;
+n_end = 200;
+
+figure(1);
+
+p = plot(NaN,NaN,'ro');
+xText = text(10,10,"TMP");
+yText = text(10,8, "TMP");
+xlim([-1 n_end])
+ylim([-1 20])
+line([n_start,n_end], [0,0]);
+axis off;
+
+
+xp = y0;    % previous position
+
+index = 0;
+for n=n_start:n_end
+    % update Y position
+    xf = pos(ay,yv0,y0,index*dt);
+    if xf < 0 
+       yv0 = -0.7*(ay*index*dt + yv0);
+       y0 = xp;
+       index = 0;
+       xf = pos(ay,yv0,y0,index*dt);
+    end
+    
+    % update Y position
+    yf = pos(ay,yv0,y0,index*dt);
+    if yf < 0 
+       yv0 = -0.7*(ay*index*dt + yv0);
+       y0 = xp;
+       index = 0;
+       yf = pos(ay,yv0,y0,index*dt);
+    end
+
+    set(p, 'XData', n, 'YData', yf);
+    set(xText, 'String', n);
+    set(yText, 'String', yf);
+    pause(dt)
+    xp = yf;
+    index = index + 1;
+end
+
+function answer = pos(a,v0,x0,t)
+    answer = 0.5*a*t^2 + v0*t + x0;
+end
